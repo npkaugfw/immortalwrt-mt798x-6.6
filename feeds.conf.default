@@ -5,6 +5,3 @@ src-git-full telephony https://github.com/openwrt/telephony.git;openwrt-24.10
 
 # FanchmWrt 24.10.4 官方源（完全兼容）
 src-git fanchmwrt https://github.com/fanchmwrt/fanchmwrt.git;fanchmwrt-24.10.4
-
-# 节点小宝官方源
-src-git nodepawn https://github.com/nodepawn/luci-app-nodepawn.git;main
