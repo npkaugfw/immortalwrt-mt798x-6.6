@@ -1,5 +1,4 @@
 name: Build ImmortalWrt 6.6 for AX6000
-
 on:
   workflow_dispatch:
     inputs:
@@ -10,47 +9,31 @@ on:
         type: choice
         options:
           - openwrt-24.10-6.6
-
 jobs:
   build:
     runs-on: ubuntu-22.04
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.branch }}
           fetch-depth: 1
-
-      - name: Install build dependencies
+      - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential ccache ecj fastjar file g++ gawk \
-          gettext git java-propose-classpath libelf-dev libncurses5-dev \
-          libncursesw5-dev libssl-dev python3 python3-distutils python2-dev \
-          python3-setuptools python3-dev rsync subversion swig time unzip \
-          wget zlib1g-dev curl jq
-
-      - name: Update and install feeds
+          sudo apt-get install -y build-essential ccache file g++ gawk gettext git libelf-dev libncurses5-dev libssl-dev python3 python3-distutils rsync subversion swig unzip wget zlib1g-dev
+      - name: Update feeds
         run: |
           ./scripts/feeds update -a
           ./scripts/feeds install -a
-
-      - name: Load custom configuration
+      - name: Load config
         run: |
           cp defconfig/mt7986-ax6000.config .config
           make defconfig
-
-      - name: Download package sources
+      - name: Download sources
         run: make download -j$(nproc)
-
       - name: Build firmware
-        run: |
-          make -j$(nproc) || make -j1 V=s
-
-      - name: Upload firmware artifacts
-        uses: actions/upload-artifact@v4
+        run: make -j$(nproc) || make -j1 V=s
+      - uses: actions/upload-artifact@v4
         with:
-          name: immortalwrt-ax6000-110m-firmware
-          path: |
-            bin/targets/mediatek/filogic/*.bin
-            bin/targets/mediatek/filogic/*.img
+          name: immortalwrt-ax6000-110m
+          path: bin/targets/mediatek/filogic/*.bin
